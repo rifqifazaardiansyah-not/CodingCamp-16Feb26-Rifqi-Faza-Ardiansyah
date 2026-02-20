@@ -292,18 +292,27 @@ input[type="date"]::-webkit-calendar-picker-indicator {
    ============================================================ */
 .toolbar {
   display: flex;
+  flex-direction: column;
   gap: 10px;
-  align-items: center;
 }
 
-.toolbar-right {
+.toolbar-search {
+  width: 100%;
+}
+
+.toolbar-actions {
   display: flex;
   gap: 8px;
   align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Delete All dorong ke kanan di desktop */
+.btn-danger-ml {
   margin-left: auto;
 }
 
-.search-wrap { position: relative; flex: 1; }
+.search-wrap { position: relative; width: 100%; }
 
 .search-ico {
   position: absolute;
@@ -315,6 +324,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .search-input { padding-left: 36px; }
+
+.btn-add-aligned {
+  margin-top: 20px;
+}
 
 /* ============================================================
    DROPDOWN
@@ -575,9 +588,17 @@ input[type="date"]::-webkit-calendar-picker-indicator {
    RESPONSIVE
    ============================================================ */
 @media (max-width: 700px) {
+  /* Stats jadi 2 kolom */
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
+
+  /* Form input stack vertical */
   .form-row { flex-direction: column; }
   .form-date-wrap { width: 100%; }
+
+  /* Sembunyikan kolom Due Date di tabel */
   .task-table th:nth-child(2),
   .task-table td:nth-child(2) { display: none; }
+
+  /* Delete All tidak perlu margin auto di mobile karena sudah wrap */
+  .btn-danger-ml { margin-left: 0; }
 }

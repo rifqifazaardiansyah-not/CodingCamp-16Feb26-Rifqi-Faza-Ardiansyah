@@ -60,6 +60,7 @@
       <div class="form-row">
         <!-- Task Input -->
         <div class="form-input-wrap">
+          <label class="field-label" for="task-input">Task Name</label>
           <input
             type="text"
             id="task-input"
@@ -71,8 +72,9 @@
           <p class="err-msg" id="task-error"></p>
         </div>
 
-        <!-- Date Input -->
+        <!-- Due Date Input -->
         <div class="form-date-wrap">
+          <label class="field-label" for="date-input">Due Date <span style="color:var(--muted);font-weight:400">(optional)</span></label>
           <input
             type="date"
             id="date-input"
@@ -82,62 +84,65 @@
         </div>
 
         <!-- Submit Button -->
-        <button class="btn-add" onclick="addTask()">+ Add Task</button>
-      </div>
+        <button class="btn-add btn-add-aligned" onclick="addTask()">+ Add Task</button>
     </section>
 
-    <!-- ===== TOOLBAR ===== -->
-    <section class="toolbar">
-      <!-- Search -->
-      <div class="search-wrap">
-        <svg class="search-ico" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input
-          type="text"
-          id="search-input"
-          class="form-input search-input"
-          placeholder="Search tasks... (Ctrl+F)"
-          oninput="handleSearch(this.value)"
-        />
+<!-- ===== TOOLBAR ===== -->
+<section class="toolbar">
+
+  <!-- Baris 1: Search (full width) -->
+  <div class="toolbar-search">
+    <div class="search-wrap">
+      <svg class="search-ico" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input
+        type="text"
+        id="search-input"
+        class="form-input search-input"
+        placeholder="Search tasks... (Ctrl+F)"
+        oninput="handleSearch(this.value)"
+      />
+    </div>
+  </div>
+
+  <!-- Baris 2: Filter, Sort, Delete All -->
+  <div class="toolbar-actions">
+    <!-- Filter -->
+    <div class="dropdown-wrap">
+      <button class="btn-outline" onclick="toggleFilterMenu()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+        <span id="filter-label">All</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="dropdown-menu" id="filter-menu">
+        <div class="dropdown-item active" data-filter="all" onclick="setFilter('all')">All Tasks</div>
+        <div class="dropdown-item" data-filter="completed" onclick="setFilter('completed')">Completed</div>
+        <div class="dropdown-item" data-filter="pending" onclick="setFilter('pending')">Pending</div>
       </div>
+    </div>
 
-      <div class="toolbar-right">
-        <!-- Filter -->
-        <div class="dropdown-wrap">
-          <button class="btn-outline" onclick="toggleFilterMenu()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
-            <span id="filter-label">All</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-          </button>
-          <div class="dropdown-menu" id="filter-menu">
-            <div class="dropdown-item active" data-filter="all" onclick="setFilter('all')">All Tasks</div>
-            <div class="dropdown-item" data-filter="completed" onclick="setFilter('completed')">Completed</div>
-            <div class="dropdown-item" data-filter="pending" onclick="setFilter('pending')">Pending</div>
-          </div>
-        </div>
-
-        <!-- Sort -->
-        <div class="dropdown-wrap">
-          <button class="btn-outline" onclick="toggleSortMenu()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-            <span id="sort-label">Date Added</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-          </button>
-          <div class="dropdown-menu" id="sort-menu">
-            <div class="dropdown-item sort-item active" data-sort="date-added" onclick="setSort('date-added')">Date Added</div>
-            <div class="dropdown-item sort-item" data-sort="due-date" onclick="setSort('due-date')">Due Date</div>
-            <div class="dropdown-item sort-item" data-sort="name-asc" onclick="setSort('name-asc')">Name A–Z</div>
-            <div class="dropdown-item sort-item" data-sort="name-desc" onclick="setSort('name-desc')">Name Z–A</div>
-            <div class="dropdown-item sort-item" data-sort="status" onclick="setSort('status')">Status</div>
-          </div>
-        </div>
-
-        <!-- Delete All -->
-        <button class="btn-danger" onclick="deleteAllTasks()">
-          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-          Delete All
-        </button>
+    <!-- Sort -->
+    <div class="dropdown-wrap">
+      <button class="btn-outline" onclick="toggleSortMenu()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        <span id="sort-label">Date Added</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="dropdown-menu" id="sort-menu">
+        <div class="dropdown-item sort-item active" data-sort="date-added" onclick="setSort('date-added')">Date Added</div>
+        <div class="dropdown-item sort-item" data-sort="due-date" onclick="setSort('due-date')">Due Date</div>
+        <div class="dropdown-item sort-item" data-sort="name-asc" onclick="setSort('name-asc')">Name A–Z</div>
+        <div class="dropdown-item sort-item" data-sort="name-desc" onclick="setSort('name-desc')">Name Z–A</div>
+        <div class="dropdown-item sort-item" data-sort="status" onclick="setSort('status')">Status</div>
       </div>
-    </section>
+    </div>
+
+    <!-- Delete All -->
+    <button class="btn-danger btn-danger-ml" onclick="deleteAllTasks()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+      Delete All
+    </button>
+  </div>
+</section>
 
     <!-- ===== TASK TABLE ===== -->
     <section class="table-section">
