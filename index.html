@@ -1,23 +1,225 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <title>Todo List - Faza</title>
+  <!-- Meta & Title -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TaskFlow</title>
 
-    <link rel="stylesheet" href="css\style.css">
+  <!-- Tailwind CSS CDN -->
+   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-    <!-- Header -->
-    <header>    </header>
 
-    <!-- Main content -->
-    <main>  </main>
-    
-    <!-- Footer -->
-    <footer>    </footer> 
-    
-    <script src="js/script.js"></script>
+  <!-- ===== APP WRAPPER ===== -->
+  <div class="app-wrapper">
+
+    <!-- ===== HEADER ===== -->
+    <header class="app-header">
+      <div>
+        <h1 class="logo">Task<span>Flow</span></h1>
+        <p class="tagline">Stay focused. Get things done.</p>
+      </div>
+      <div class="header-date">
+        <p class="date-label">TODAY</p>
+        <p class="date-value" id="today-date"></p>
+      </div>
+    </header>
+
+    <!-- ===== STAT CARDS ===== -->
+    <section class="stats-grid">
+      <div class="stat-card">
+        <p class="stat-label">TOTAL</p>
+        <p class="stat-num purple" id="stat-total">0</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">DONE</p>
+        <p class="stat-num green" id="stat-completed">0</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">PENDING</p>
+        <p class="stat-num yellow" id="stat-pending">0</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">PROGRESS</p>
+        <p class="stat-num lime" id="stat-progress">0%</p>
+      </div>
+    </section>
+
+    <!-- ===== PROGRESS BAR ===== -->
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+
+    <!-- ===== ADD TASK FORM ===== -->
+    <section class="form-section">
+      <p class="form-title">+ NEW TASK</p>
+      <div class="form-row">
+        <!-- Task Input -->
+        <div class="form-input-wrap">
+          <input
+            type="text"
+            id="task-input"
+            class="form-input"
+            placeholder="What needs to be done?"
+            maxlength="120"
+            autocomplete="off"
+          />
+          <p class="err-msg" id="task-error"></p>
+        </div>
+
+        <!-- Date Input -->
+        <div class="form-date-wrap">
+          <input
+            type="date"
+            id="date-input"
+            class="form-input"
+          />
+          <p class="err-msg warn" id="date-error"></p>
+        </div>
+
+        <!-- Submit Button -->
+        <button class="btn-add" onclick="addTask()">+ Add Task</button>
+      </div>
+    </section>
+
+    <!-- ===== TOOLBAR ===== -->
+    <section class="toolbar">
+      <!-- Search -->
+      <div class="search-wrap">
+        <svg class="search-ico" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input
+          type="text"
+          id="search-input"
+          class="form-input search-input"
+          placeholder="Search tasks... (Ctrl+F)"
+          oninput="handleSearch(this.value)"
+        />
+      </div>
+
+      <div class="toolbar-right">
+        <!-- Filter -->
+        <div class="dropdown-wrap">
+          <button class="btn-outline" onclick="toggleFilterMenu()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+            <span id="filter-label">All</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="dropdown-menu" id="filter-menu">
+            <div class="dropdown-item active" data-filter="all" onclick="setFilter('all')">All Tasks</div>
+            <div class="dropdown-item" data-filter="completed" onclick="setFilter('completed')">Completed</div>
+            <div class="dropdown-item" data-filter="pending" onclick="setFilter('pending')">Pending</div>
+          </div>
+        </div>
+
+        <!-- Sort -->
+        <div class="dropdown-wrap">
+          <button class="btn-outline" onclick="toggleSortMenu()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            <span id="sort-label">Date Added</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="dropdown-menu" id="sort-menu">
+            <div class="dropdown-item sort-item active" data-sort="date-added" onclick="setSort('date-added')">Date Added</div>
+            <div class="dropdown-item sort-item" data-sort="due-date" onclick="setSort('due-date')">Due Date</div>
+            <div class="dropdown-item sort-item" data-sort="name-asc" onclick="setSort('name-asc')">Name A–Z</div>
+            <div class="dropdown-item sort-item" data-sort="name-desc" onclick="setSort('name-desc')">Name Z–A</div>
+            <div class="dropdown-item sort-item" data-sort="status" onclick="setSort('status')">Status</div>
+          </div>
+        </div>
+
+        <!-- Delete All -->
+        <button class="btn-danger" onclick="deleteAllTasks()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+          Delete All
+        </button>
+      </div>
+    </section>
+
+    <!-- ===== TASK TABLE ===== -->
+    <section class="table-section">
+      <table class="task-table">
+        <thead>
+          <tr>
+            <th style="width:48%">TASK</th>
+            <th style="width:20%">DUE DATE</th>
+            <th style="width:16%">STATUS</th>
+            <th style="width:16%">ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody id="task-tbody"></tbody>
+      </table>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="app-footer">
+      © 2026 Built with <span style="color:#ef4444">♥</span> using vanilla JS + Tailwind CSS
+      &nbsp;·&nbsp; Task Flow
+    </footer>
+
+  </div>
+  <!-- End App Wrapper -->
+
+  <!-- ===== CONFIRM DELETE MODAL ===== -->
+<div class="modal-overlay" id="confirm-overlay">
+  <div class="modal-box" style="max-width:400px">
+    <div class="modal-header">
+      <h2 id="confirm-title">Delete Task?</h2>
+      <button class="btn-icon-sm" onclick="closeConfirmModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <p id="confirm-message" style="font-size:14px;color:var(--muted);line-height:1.6"></p>
+      <div class="modal-actions" style="margin-top:4px">
+        <button class="btn-outline" onclick="closeConfirmModal()">Cancel</button>
+        <button class="btn-danger" style="padding:8px 18px" onclick="confirmAction()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+          Yes, Delete
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- ===== EDIT MODAL ===== -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2>Edit Task</h2>
+        <button class="btn-icon-sm" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div>
+          <label class="field-label">Task Name</label>
+          <input type="text" id="edit-task-input" class="form-input" placeholder="Task name..." maxlength="120" />
+          <p class="err-msg" id="edit-task-error"></p>
+        </div>
+        <div>
+          <label class="field-label">Due Date</label>
+          <input type="date" id="edit-date-input" class="form-input" />
+        </div>
+        <div class="modal-actions">
+          <button class="btn-outline" onclick="closeModal()">Cancel</button>
+          <button class="btn-add" onclick="saveEdit()">Save Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TOAST ===== -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Set today date -->
+  <script>
+    document.getElementById('today-date').textContent = new Date().toLocaleDateString('en-US', {
+      weekday: 'long', day: 'numeric', month: 'long'
+    });
+  </script>
+
+  <!-- Main JS -->
+  <script src="js/script.js"></script>
+
 </body>
 </html>
