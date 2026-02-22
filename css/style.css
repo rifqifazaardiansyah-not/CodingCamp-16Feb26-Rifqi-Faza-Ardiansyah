@@ -337,7 +337,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .dropdown-menu {
   position: absolute;
   top: calc(100% + 6px);
-  left: 0;
+  right: 0;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 8px;
