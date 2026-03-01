@@ -101,14 +101,17 @@ function validateForm(taskText, dateValue, isModal = false) {
 function addTask() {
   const taskInput = document.getElementById('task-input');
   const dateInput = document.getElementById('date-input');
+  const descInput = document.getElementById('desc-input');
   const text      = taskInput.value;
   const date      = dateInput.value;
+  const desc      = descInput.value.trim();
 
   if (!validateForm(text, date)) return;
 
   tasks.unshift({
     id:        generateId(),
     text:      text.trim(),
+    desc:      desc || null,          // ← field baru
     dueDate:   date || null,
     completed: false,
     addedAt:   new Date().toISOString()
@@ -119,6 +122,7 @@ function addTask() {
 
   taskInput.value = '';
   dateInput.value = '';
+  descInput.value = '';
   taskInput.focus();
   showToast('Task added!', 'success');
 }
@@ -180,6 +184,7 @@ function openEditModal(id) {
   editingId = id;
   document.getElementById('edit-task-input').value = task.text;
   document.getElementById('edit-date-input').value = task.dueDate || '';
+  document.getElementById('edit-desc-input').value = task.desc || '';   // ← tambahan
   document.getElementById('modal-overlay').classList.add('open');
 }
 
@@ -197,13 +202,16 @@ function closeModal() {
 function saveEdit() {
   const text = document.getElementById('edit-task-input').value;
   const date = document.getElementById('edit-date-input').value;
+  const desc = document.getElementById('edit-desc-input').value.trim();
+
   if (!validateForm(text, date, true)) return;
 
   const idx = tasks.findIndex(t => t.id === editingId);
   if (idx === -1) return;
 
-  tasks[idx].text    = text.trim();
+  tasks[idx].text   = text.trim();
   tasks[idx].dueDate = date || null;
+  tasks[idx].desc   = desc || null;   // ← tambahan
 
   saveTasks();
   renderAll();
@@ -369,7 +377,14 @@ function renderList() {
     const checkSvg = task.completed
       ? `<svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#0f0f13" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`
       : '';
-
+    // Bagian pertama td (task name + desc)
+    const descHtml = task.desc
+      ? `<button class="btn-desc-toggle" onclick="toggleDesc('${task.id}')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span id="desc-toggle-label-${task.id}">Show description</span>
+        </button>
+        <p class="task-desc" id="task-desc-${task.id}">${escapeHtml(task.desc)}</p>`
+      : '';
     const editSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
 
     const delSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`;
@@ -382,7 +397,10 @@ function renderList() {
         <td>
           <div class="task-cell">
             <div class="check-box ${task.completed ? 'checked' : ''}" onclick="toggleTask('${task.id}')">${checkSvg}</div>
-            <span class="task-name ${task.completed ? 'done' : ''}">${escapeHtml(task.text)}</span>
+            <div>
+              <span class="task-name ${task.completed ? 'done' : ''}">${escapeHtml(task.text)}</span>
+              ${descHtml}
+            </div>
           </div>
         </td>
         <td>${formatDate(task.dueDate)}</td>
@@ -395,6 +413,18 @@ function renderList() {
         </td>
       </tr>`;
   }).join('');
+}
+
+/* ============================================================
+   TOGGLE DESCRIPTION VISIBILITY
+   ============================================================ */
+function toggleDesc(id) {
+  const descEl  = document.getElementById('task-desc-' + id);
+  const labelEl = document.getElementById('desc-toggle-label-' + id);
+  if (!descEl) return;
+
+  const isShowing = descEl.classList.toggle('show');
+  labelEl.textContent = isShowing ? 'Hide description' : 'Show description';
 }
 
 /* ============================================================

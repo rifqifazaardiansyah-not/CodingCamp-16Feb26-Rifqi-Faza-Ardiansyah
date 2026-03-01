@@ -585,6 +585,49 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 /* ============================================================
+   TEXTAREA
+   ============================================================ */
+.form-textarea {
+  resize: none;
+  min-height: unset;
+  height: 41px;       
+  line-height: 1.5;
+  font-size: 13px;
+  overflow: hidden;
+}
+
+/* Deskripsi di dalam baris task */
+.task-desc {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+  line-height: 1.55;
+  display: none;
+}
+
+.task-desc.show {
+  display: block;
+}
+
+/* Tombol toggle deskripsi */
+.btn-desc-toggle {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 11px;
+  font-family: 'Inter', sans-serif;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 0;
+  margin-top: 4px;
+  transition: color 0.15s;
+}
+
+.btn-desc-toggle:hover { color: var(--text); }
+
+/* ============================================================
    RESPONSIVE
    ============================================================ */
 @media (max-width: 700px) {

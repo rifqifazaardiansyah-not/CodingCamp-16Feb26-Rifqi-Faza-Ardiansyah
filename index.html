@@ -72,6 +72,18 @@
           <p class="err-msg" id="task-error"></p>
         </div>
 
+        <!-- Description -->
+        <div class="form-input-wrap">
+          <label class="field-label" for="desc-input">Description <span style="color:var(--muted);font-weight:400">(optional)</span></label>
+          <textarea
+            id="desc-input"
+            class="form-input form-textarea"
+            placeholder="Add a description..."
+            maxlength="500"
+            rows="1"
+          ></textarea>
+        </div>
+
         <!-- Due Date Input -->
         <div class="form-date-wrap">
           <label class="field-label" for="date-input">Due Date <span style="color:var(--muted);font-weight:400">(optional)</span></label>
@@ -204,6 +216,16 @@
         <div>
           <label class="field-label">Due Date</label>
           <input type="date" id="edit-date-input" class="form-input" />
+        </div>
+        <div>
+          <label class="field-label">Description <span style="color:var(--muted);font-weight:400">(optional)</span></label>
+          <textarea
+            id="edit-desc-input"
+            class="form-input form-textarea"
+            placeholder="Add a description..."
+            maxlength="500"
+            rows="3"
+          ></textarea>
         </div>
         <div class="modal-actions">
           <button class="btn-outline" onclick="closeModal()">Cancel</button>
